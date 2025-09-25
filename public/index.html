@@ -1,73 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Prototype Chat</title>
+  <meta charset="UTF-8" />
+  <title>Chat Room Prototype</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <h2>Prototype Chat Room</h2>
-  <div id="setup">
-    <button onclick="createRoom()">Create Room</button>
-    <input id="roomInput" placeholder="Enter room code" />
-    <button onclick="joinRoom()">Join Room</button>
+  <h1>Temporary Chat Room</h1>
+  
+  <div id="controls">
+    <button id="createRoom">Create Room</button>
+    <input id="roomCode" placeholder="Enter Room Code" />
+    <button id="joinRoom">Join Room</button>
   </div>
-
+  
   <div id="chat" style="display:none;">
-    <h3 id="roomTitle"></h3>
-    <div id="messages" style="border:1px solid #ccc; height:200px; overflow-y:scroll;"></div>
-    <input id="msgBox" placeholder="Type message..." onkeydown="if(event.key==='Enter') sendMsg()" />
-    <button onclick="sendMsg()">Send</button>
+    <h2 id="roomTitle"></h2>
+    <div id="messages"></div>
+    <input id="messageInput" placeholder="Type a message..." />
+    <button id="sendMessage">Send</button>
   </div>
 
+  <!-- Socket.IO client -->
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    let roomCode = "";
-
-    socket.on("roomCreated", (code) => {
-      roomCode = code;
-      showChat();
-    });
-
-    socket.on("userJoined", (id) => {
-      addMessage(`User ${id} joined the room`);
-    });
-
-    socket.on("chatMsg", (data) => {
-      addMessage(`${data.user}: ${data.msg}`);
-    });
-
-    socket.on("roomClosed", () => {
-      alert("Host closed the room");
-      location.reload();
-    });
-
-    function createRoom() {
-      socket.emit("createRoom");
-    }
-
-    function joinRoom() {
-      roomCode = document.getElementById("roomInput").value;
-      socket.emit("joinRoom", roomCode);
-      showChat();
-    }
-
-    function sendMsg() {
-      const msg = document.getElementById("msgBox").value;
-      socket.emit("chatMsg", { roomCode, msg });
-      document.getElementById("msgBox").value = "";
-    }
-
-    function addMessage(msg) {
-      const div = document.createElement("div");
-      div.textContent = msg;
-      document.getElementById("messages").appendChild(div);
-    }
-
-    function showChat() {
-      document.getElementById("setup").style.display = "none";
-      document.getElementById("chat").style.display = "block";
-      document.getElementById("roomTitle").textContent = "Room: " + roomCode;
-    }
-  </script>
+  <!-- Our client JS -->
+  <script src="assets/js/client.js"></script>
 </body>
 </html>

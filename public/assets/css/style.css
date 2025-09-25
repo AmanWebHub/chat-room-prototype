@@ -1,0 +1,96 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  margin: 20px 0;
+  color: #2c3e50;
+}
+
+#controls {
+  margin-bottom: 20px;
+}
+
+#controls input, #controls button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#chat {
+  width: 400px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#roomTitle {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  text-align: center;
+  color: #34495e;
+}
+
+#messages {
+  height: 250px;
+  overflow-y: auto;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+#messages p {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 70%;
+  clear: both;
+}
+
+#messages p.system {
+  text-align: center;
+  font-style: italic;
+  color: #888;
+  background: none;
+}
+
+#messages p.self {
+  background: #3498db;
+  color: #fff;
+  float: right;
+}
+
+#messages p.other {
+  background: #ecf0f1;
+  color: #2c3e50;
+  float: left;
+}
+
+#messageInput {
+  width: 70%;
+  padding: 8px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#sendMessage {
+  padding: 8px 12px;
+  background: #3498db;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#sendMessage:hover {
+  background: #2980b9;
+}
