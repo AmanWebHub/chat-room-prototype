@@ -1,5 +1,6 @@
 const socket = io();
 
+
 // UI elements
 const createBtn = document.getElementById("createRoom");
 const joinBtn = document.getElementById("joinRoom");
