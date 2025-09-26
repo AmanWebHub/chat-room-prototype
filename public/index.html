@@ -8,18 +8,23 @@
 <body>
   <div class="container">
     <h1>💬 Temporary Chat Room</h1>
-    
+
     <div id="controls">
+      <!-- New nickname input -->
+      <div class="nickname-section">
+        <input id="nickname" placeholder="Enter a nickname (optional)" maxlength="20" />
+      </div>
+
       <button id="createRoom" class="btn-primary">Create New Room</button>
-      
+
       <div class="join-section">
         <input id="roomCode" placeholder="Enter Room Code" maxlength="6" />
         <button id="joinRoom" class="btn-secondary">Join Room</button>
       </div>
-      
+
       <div id="status"></div>
     </div>
-    
+
     <div id="chat" style="display:none;">
       <div class="chat-header">
         <h2 id="roomTitle">Room: Loading...</h2>
@@ -28,9 +33,9 @@
           <button id="closeRoom" class="btn-danger" style="display:none;">Close Room</button>
         </div>
       </div>
-      
+
       <div id="messages"></div>
-      
+
       <div class="message-input-container">
         <input id="messageInput" placeholder="Type a message... (Press Enter to send)" />
         <button id="sendMessage" class="btn-primary">Send</button>

@@ -6,6 +6,7 @@ const joinBtn = document.getElementById("joinRoom");
 const leaveBtn = document.getElementById("leaveRoom");
 const closeRoomBtn = document.getElementById("closeRoom");
 const roomCodeInput = document.getElementById("roomCode");
+const nicknameInput = document.getElementById("nickname");
 const chatDiv = document.getElementById("chat");
 const roomTitle = document.getElementById("roomTitle");
 const messagesDiv = document.getElementById("messages");
@@ -13,12 +14,16 @@ const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendMessage");
 const statusDiv = document.getElementById("status");
 
-// Generate guest name
-const guestName = "Guest" + Math.floor(Math.random() * 1000);
+// Generate default guest name
+const generateGuestName = () => "Guest" + Math.floor(Math.random() * 1000);
+let currentUserName = generateGuestName();
 let currentRoom = null;
 let isHost = false;
 
-console.log("Client loaded. Guest name:", guestName);
+console.log("Client loaded. Default name:", currentUserName);
+
+// Set placeholder for nickname input
+nicknameInput.placeholder = `e.g., ${currentUserName}`;
 
 // Show status message
 function showStatus(message, type = 'info') {
@@ -32,10 +37,17 @@ function showStatus(message, type = 'info') {
     }, 3000);
 }
 
+// Get current username
+function getCurrentUserName() {
+    const customName = nicknameInput.value.trim();
+    return customName || currentUserName;
+}
+
 // Create Room
 createBtn.onclick = () => {
     console.log("Creating room...");
-    socket.emit("createRoom", { name: guestName });
+    currentUserName = getCurrentUserName();
+    socket.emit("createRoom", { name: currentUserName });
     showStatus('Creating room...', 'info');
 };
 
@@ -52,7 +64,8 @@ function joinRoom() {
         return;
     }
     console.log("Joining room:", code);
-    socket.emit("joinRoom", { room: code, name: guestName });
+    currentUserName = getCurrentUserName();
+    socket.emit("joinRoom", { room: code, name: currentUserName });
     showStatus('Joining room...', 'info');
 }
 
@@ -100,6 +113,12 @@ roomCodeInput.addEventListener('keypress', (e) => {
     }
 });
 
+nicknameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        createBtn.focus(); // Move focus to create button
+    }
+});
+
 // Reset chat UI
 function resetChat() {
     currentRoom = null;
@@ -109,6 +128,7 @@ function resetChat() {
     roomCodeInput.value = "";
     closeRoomBtn.style.display = "none";
     leaveBtn.style.display = "block";
+    // Don't reset nickname input
 }
 
 // Show host controls
@@ -133,7 +153,7 @@ socket.on("roomCreated", (data) => {
     chatDiv.style.display = "block";
     showHostControls();
     showStatus(`Room created! Code: ${data.code}`, 'success');
-    addSystemMessage('You created this room. You are the host.');
+    addSystemMessage(`You created this room as "${currentUserName}". You are the host.`);
 });
 
 socket.on("roomJoined", (data) => {
@@ -142,7 +162,7 @@ socket.on("roomJoined", (data) => {
     roomTitle.textContent = `Room: ${data.code}`;
     chatDiv.style.display = "block";
     showParticipantControls();
-    showStatus(`Joined room: ${data.code}`, 'success');
+    showStatus(`Joined room: ${data.code} as "${currentUserName}"`, 'success');
 });
 
 socket.on("joinError", (message) => {
@@ -182,12 +202,12 @@ function addMessage(name, text, type = 'user') {
     if (type === 'system') {
         messageDiv.classList.add("system");
         messageDiv.textContent = text;
-    } else if (name === guestName) {
+    } else if (name === currentUserName) {
         messageDiv.classList.add("self");
-        messageDiv.textContent = text;
+        messageDiv.innerHTML = `<strong>You:</strong> ${text}`;
     } else {
         messageDiv.classList.add("other");
-        messageDiv.textContent = `${name}: ${text}`;
+        messageDiv.innerHTML = `<strong>${name}:</strong> ${text}`;
     }
     
     messagesDiv.appendChild(messageDiv);

@@ -31,20 +31,30 @@ function generateRoomCode() {
     return result;
 }
 
+function sanitizeName(name) {
+    // Remove any HTML tags and limit length
+    return name.toString()
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .substring(0, 20)
+        .trim() || 'Anonymous';
+}
+
 io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
     socket.on("createRoom", ({ name }) => {
         try {
+            const sanitizedName = sanitizeName(name);
             const code = generateRoomCode();
             rooms[code] = { 
                 hostId: socket.id, 
-                users: { [socket.id]: name },
+                users: { [socket.id]: sanitizedName },
                 createdAt: new Date()
             };
             socket.join(code);
             socket.emit("roomCreated", { code });
-            console.log(`Room created: ${code} by ${name} (${socket.id})`);
+            console.log(`Room created: ${code} by ${sanitizedName} (${socket.id})`);
         } catch (error) {
             console.error("Error creating room:", error);
             socket.emit("joinError", "Failed to create room");
@@ -54,6 +64,7 @@ io.on("connection", (socket) => {
     socket.on("joinRoom", ({ room, name }) => {
         try {
             const code = room.toUpperCase();
+            const sanitizedName = sanitizeName(name);
             
             if (!rooms[code]) {
                 socket.emit("joinError", "Room not found");
@@ -71,18 +82,18 @@ io.on("connection", (socket) => {
                 return;
             }
             
-            rooms[code].users[socket.id] = name;
+            rooms[code].users[socket.id] = sanitizedName;
             socket.join(code);
             socket.emit("roomJoined", { code });
             
-            // Notify others in the room (ONLY ONCE)
-            io.to(code).emit("chatMessage", { 
+            // Notify others in the room
+            socket.to(code).emit("chatMessage", { 
                 name: "System", 
-                text: `${name} joined the room`,
+                text: `${sanitizedName} joined the room`,
                 type: "system"
             });
             
-            console.log(`User ${name} joined room: ${code}`);
+            console.log(`User ${sanitizedName} joined room: ${code}`);
         } catch (error) {
             console.error("Error joining room:", error);
             socket.emit("joinError", "Failed to join room");
@@ -93,20 +104,21 @@ io.on("connection", (socket) => {
         const roomData = rooms[room];
         if (roomData && roomData.users[socket.id]) {
             const name = roomData.users[socket.id];
-            io.to(room).emit("chatMessage", { name, text });
-            console.log(`Message in ${room} from ${name}: ${text}`);
+            const sanitizedText = text.toString().substring(0, 500); // Limit message length
+            io.to(room).emit("chatMessage", { name, text: sanitizedText });
+            console.log(`Message in ${room} from ${name}: ${sanitizedText}`);
         }
     });
 
     socket.on("leaveRoom", (room) => {
         const roomData = rooms[room];
-        if (roomData) {
+        if (roomData && roomData.users[socket.id]) {
             const userName = roomData.users[socket.id];
             delete roomData.users[socket.id];
             socket.leave(room);
             
             // Notify others
-            io.to(room).emit("chatMessage", { 
+            socket.to(room).emit("chatMessage", { 
                 name: "System", 
                 text: `${userName} left the room`,
                 type: "system"
@@ -136,11 +148,9 @@ io.on("connection", (socket) => {
             // Special message for the host
             socket.emit("roomClosedByHost");
             
-            // Delete the room after a short delay
-            setTimeout(() => {
-                delete rooms[roomCode];
-                console.log(`Room ${roomCode} deleted by host`);
-            }, 1000);
+            // Delete the room
+            delete rooms[roomCode];
+            console.log(`Room ${roomCode} deleted by host`);
         } else {
             socket.emit("joinError", "You are not the host of this room");
         }
@@ -156,12 +166,8 @@ io.on("connection", (socket) => {
                     room: code, 
                     message: "Host disconnected" 
                 });
-                
-                // Delete the room after a short delay
-                setTimeout(() => {
-                    delete rooms[code];
-                    console.log(`Room ${code} closed (host disconnected)`);
-                }, 1000);
+                delete rooms[code];
+                console.log(`Room ${code} closed (host disconnected)`);
             } else if (room.users[socket.id]) {
                 // User disconnected
                 const userName = room.users[socket.id];
@@ -175,12 +181,8 @@ io.on("connection", (socket) => {
                 
                 // Clean up empty rooms
                 if (Object.keys(room.users).length === 0) {
-                    setTimeout(() => {
-                        if (rooms[code] && Object.keys(rooms[code].users).length === 0) {
-                            delete rooms[code];
-                            console.log(`Room ${code} deleted (empty after disconnect)`);
-                        }
-                    }, 5000);
+                    delete rooms[code];
+                    console.log(`Room ${code} deleted (empty after disconnect)`);
                 }
             }
         }
