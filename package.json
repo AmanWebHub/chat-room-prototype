@@ -1,15 +1,15 @@
 {
   "name": "chat-prototype",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Temporary chat room prototype using Node.js, Express, and Socket.IO",
+  "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server/server.js",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["chat", "socket.io", "express", "prototype"],
+  "author": "Your Name",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
