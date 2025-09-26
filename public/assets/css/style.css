@@ -125,6 +125,33 @@ h1 {
   background: #c0392b;
 }
 
+.btn-copy {
+  background: #9b59b6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-copy:hover {
+  background: #8e44ad;
+  transform: translateY(-1px);
+}
+
+.btn-copy.copied {
+  background: #27ae60;
+}
+
+.btn-copy.copied::after {
+  content: " ✓";
+}
+
 #status {
   margin-top: 15px;
   padding: 10px;
@@ -150,6 +177,15 @@ h1 {
   margin-bottom: 20px;
   padding-bottom: 15px;
   border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
 .host-controls {
@@ -161,7 +197,7 @@ h1 {
   margin: 0;
   color: #2c3e50;
   font-size: 20px;
-  min-width: 200px;
+  font-weight: 600;
 }
 
 #messages {
@@ -243,7 +279,7 @@ h1 {
 /* Timestamp styling */
 .message .timestamp {
   font-size: 11px;
-  color: #d1e6e7; /* ✅ your preferred color */
+  color: #d1e6e7;
   margin-left: 6px;
   opacity: 0.8;
 }
@@ -256,6 +292,32 @@ h1 {
   margin-top: 4px;
   margin-left: 0;
   font-style: normal;
+}
+
+/* Copy room code notification */
+.copy-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #27ae60;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    top: -50px;
+    opacity: 0;
+  }
+  to {
+    top: 20px;
+    opacity: 1;
+  }
 }
 
 /* Scrollbar styling */
@@ -275,4 +337,37 @@ h1 {
 
 #messages::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .chat-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .room-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .host-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .message {
+    max-width: 90%;
+  }
+  
+  #roomTitle {
+    font-size: 18px;
+    min-width: auto;
+  }
 }

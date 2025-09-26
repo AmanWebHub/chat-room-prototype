@@ -5,6 +5,7 @@ const createBtn = document.getElementById("createRoom");
 const joinBtn = document.getElementById("joinRoom");
 const leaveBtn = document.getElementById("leaveRoom");
 const closeRoomBtn = document.getElementById("closeRoom");
+const copyRoomCodeBtn = document.getElementById("copyRoomCode");
 const roomCodeInput = document.getElementById("roomCode");
 const chatDiv = document.getElementById("chat");
 const roomTitle = document.getElementById("roomTitle");
@@ -13,6 +14,7 @@ const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendMessage");
 const statusDiv = document.getElementById("status");
 const nicknameInput = document.getElementById("nickname");
+const controlsDiv = document.getElementById("controls");
 
 let guestName = null;
 let currentRoom = null;
@@ -36,6 +38,48 @@ function showStatus(message, type = "info") {
       statusDiv.className = "";
     }
   }, 3000);
+}
+
+// Show copy notification
+function showCopyNotification() {
+  const notification = document.createElement('div');
+  notification.className = 'copy-notification';
+  notification.textContent = 'Room code copied to clipboard!';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 2000);
+}
+
+// Copy room code to clipboard
+function copyRoomCode() {
+  if (currentRoom) {
+    navigator.clipboard.writeText(currentRoom).then(() => {
+      // Visual feedback
+      copyRoomCodeBtn.classList.add('copied');
+      showCopyNotification();
+      
+      setTimeout(() => {
+        copyRoomCodeBtn.classList.remove('copied');
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy room code: ', err);
+      showStatus('Failed to copy room code', 'error');
+    });
+  }
+}
+
+// Hide room creation/join inputs
+function hideRoomInputs() {
+  controlsDiv.style.display = 'none';
+  chatDiv.style.display = 'block';
+}
+
+// Show room creation/join inputs
+function showRoomInputs() {
+  controlsDiv.style.display = 'block';
+  chatDiv.style.display = 'none';
 }
 
 // Create Room
@@ -88,6 +132,9 @@ closeRoomBtn.onclick = () => {
   }
 };
 
+// Copy Room Code
+copyRoomCodeBtn.onclick = copyRoomCode;
+
 // Send Message
 sendBtn.onclick = sendMessage;
 function sendMessage() {
@@ -105,6 +152,7 @@ messageInput.addEventListener("keypress", (e) => {
     sendMessage();
   }
 });
+
 roomCodeInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     joinRoom();
@@ -115,11 +163,12 @@ roomCodeInput.addEventListener("keypress", (e) => {
 function resetChat() {
   currentRoom = null;
   isHost = false;
-  chatDiv.style.display = "none";
+  showRoomInputs();
   messagesDiv.innerHTML = "";
   roomCodeInput.value = "";
   closeRoomBtn.style.display = "none";
   leaveBtn.style.display = "block";
+  copyRoomCodeBtn.classList.remove('copied');
 }
 
 // Show host controls
@@ -148,7 +197,7 @@ function addMessage(name, text, type = "user", timestamp = null) {
     timeStr = date.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, // ✅ 24-hour format
+      hour12: false,
     });
   }
 
@@ -176,7 +225,7 @@ socket.on("roomCreated", (data) => {
   console.log("Room created:", data.code);
   currentRoom = data.code;
   roomTitle.textContent = `Room: ${data.code} (Host)`;
-  chatDiv.style.display = "block";
+  hideRoomInputs();
   showHostControls();
   showStatus(`Room created! Code: ${data.code}`, "success");
   addSystemMessage("You created this room. You are the host.");
@@ -186,7 +235,7 @@ socket.on("roomJoined", (data) => {
   console.log("Room joined:", data.code);
   currentRoom = data.code;
   roomTitle.textContent = `Room: ${data.code}`;
-  chatDiv.style.display = "block";
+  hideRoomInputs();
   showParticipantControls();
   showStatus(`Joined room: ${data.code}`, "success");
 });
