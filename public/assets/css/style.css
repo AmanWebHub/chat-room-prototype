@@ -34,21 +34,15 @@ h1 {
 }
 
 .nickname-section {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .nickname-section input {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   border: 2px solid #ddd;
   border-radius: 6px;
   font-size: 16px;
-  transition: border-color 0.3s;
-}
-
-.nickname-section input:focus {
-  outline: none;
-  border-color: #3498db;
 }
 
 .join-section {
@@ -80,8 +74,6 @@ h1 {
   cursor: pointer;
   font-size: 16px;
   transition: background 0.3s;
-  width: 100%;
-  margin-bottom: 10px;
 }
 
 .btn-primary:hover {
@@ -97,7 +89,6 @@ h1 {
   cursor: pointer;
   font-size: 16px;
   transition: background 0.3s;
-  flex: 1;
 }
 
 .btn-secondary:hover {
@@ -159,8 +150,6 @@ h1 {
   margin-bottom: 20px;
   padding-bottom: 15px;
   border-bottom: 1px solid #eee;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .host-controls {
@@ -206,7 +195,6 @@ h1 {
   background: #ecf0f1;
   margin: 8px auto;
   max-width: 90%;
-  font-size: 0.9em;
 }
 
 .message.self {
@@ -217,16 +205,12 @@ h1 {
 }
 
 .message.other {
-  background: #ecf0f1;
-  color: #2c3e50;
+  background: #000000;
+  color: #eff5f0;
   float: left;
 }
 
-.message.self strong,
-.message.other strong {
-  font-weight: 600;
-}
-
+/* Message input area */
 .message-input-container {
   display: flex;
   gap: 10px;
@@ -243,6 +227,35 @@ h1 {
 #messageInput:focus {
   outline: none;
   border-color: #3498db;
+}
+
+/* Send button smaller with icon */
+#sendMessage {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* Timestamp styling */
+.message .timestamp {
+  font-size: 11px;
+  color: #d1e6e7; /* ✅ your preferred color */
+  margin-left: 6px;
+  opacity: 0.8;
+}
+
+/* System messages with timestamp below */
+.message.system .timestamp {
+  display: block;
+  font-size: 10px;
+  color: #d1e6e7;
+  margin-top: 4px;
+  margin-left: 0;
+  font-style: normal;
 }
 
 /* Scrollbar styling */
@@ -262,26 +275,4 @@ h1 {
 
 #messages::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
-}
-
-/* Responsive design */
-@media (max-width: 600px) {
-  .container {
-    padding: 20px;
-    margin: 10px;
-  }
-  
-  .chat-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .host-controls {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .message {
-    max-width: 90%;
-  }
 }
