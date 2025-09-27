@@ -8,6 +8,7 @@ This is a demo chat room application built for [My Portfolio](https://github.com
 - **Express**
 - **Socket.io**
 - **IO Font Awesome**
+- **PNPM** for package management
 
 ## Features
 
@@ -20,6 +21,7 @@ This is a demo chat room application built for [My Portfolio](https://github.com
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) installed
+- [PNPM](https://pnpm.io/) installed
 
 ### Installation
 
@@ -29,14 +31,14 @@ This is a demo chat room application built for [My Portfolio](https://github.com
     cd chat-room-prototype
     ```
 
-2. Install dependencies:
+2. Install dependencies with PNPM:
     ```bash
-    npm install
+    pnpm install
     ```
 
 3. Run the application:
     ```bash
-    npm start
+    pnpm start
     ```
 
 4. Open your browser and go to `http://localhost:3000` (or the specified port).
