@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["chat", "socket.io", "express", "prototype"],
-  "author": "Your Name",
+  "author": "Aman Raheem",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
